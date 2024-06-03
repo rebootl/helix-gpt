@@ -7,7 +7,11 @@ export class Completion extends Array<string> {
   }
 
   static fromResponse(data: any): Completion {
-    return new Completion(data.message.content as string);
+    // const content = data.response as string;
+    // const result = extractCodeBlock('', content, '');
+    // return new Completion(result as string);
+    return new Completion(data.response as string);
+    // return new Completion('hi');
   }
 }
 

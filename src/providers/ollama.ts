@@ -16,6 +16,7 @@ export default class Ollama extends ApiBase {
     });
     this.timeout = parseInt(config.ollamaTimeout, 10);
     this.model = config.ollamaModel;
+    this.modelCode = config.ollamaModelCode;
   }
 
   async chat(
@@ -55,7 +56,7 @@ export default class Ollama extends ApiBase {
     });
 
     log("content", data.message.content)
-    
+
     return types.Chat.fromResponse(data, filepath, languageId);
   }
 
@@ -65,33 +66,46 @@ export default class Ollama extends ApiBase {
     languageId: string,
     suggestions = 3,
   ): Promise<types.Completion> {
-    const messages = [
-      {
-        role: "system",
-        content: config.ollamaContext?.replace("<languageId>", languageId) + "\n\n" + `End of file context:\n\n${contents.contentAfter}`
-      },
-      {
-        role: "user",
-        content: `Start of file context:\n\n${contents.contentBefore}`
-      }
-    ]
+    // const messages = [
+    //   {
+    //     role: "system",
+    //     content: config.ollamaContext?.replace("<languageId>", languageId) + "\n\n" + `End of file context:\n\n${contents.contentAfter}`
+    //   },
+    //   {
+    //     role: "user",
+    //     content: `Start of file context:\n\n${contents.contentBefore}`
+    //   }
+    // ]
 
-    log("prompt", messages.map(m => `role: ${m.role}\n${m.content}`).join("\n"))
+    // log("prompt", messages.map(m => `role: ${m.role}\n${m.content}`).join("\n"))
+    const prompt = config.ollamaCodePrompt
+      .replace('{prefixHelixGPT}', contents.contentBefore)
+      .replace('{suffixHelixGPT}', contents.contentAfter);
+
+    log("prompt", prompt);
 
     const body = {
-      model: this.model,
+      model: this.modelCode,
       stream: false,
-      messages,
+      // messages,
+      // system: config.ollamaContext?.replace("<languageId>", languageId),
+      prompt: prompt,
+      // options: {
+      //   num_predict: 15,
+      // }
     };
 
     const data = await this.request({
       method: "POST",
       body,
-      endpoint: "/api/chat",
+      endpoint: "/api/generate",
+      // endpoint: "/api/chat",
       timeout: this.timeout,
     });
 
-    log("content", data.message.content)
+    // log("data", JSON.stringify(data))
+    log("HERE", JSON.stringify(data))
+    // log("response", data.response)
 
     return types.Completion.fromResponse(data);
   }

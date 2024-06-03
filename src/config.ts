@@ -88,7 +88,15 @@ const { values } = parseArgs({
     },
     ollamaModel: {
       type: 'string',
-      default: Bun.env.OLLAMA_MODEL ?? "codellama"
+      default: Bun.env.OLLAMA_MODEL ?? "codellama:latest"
+    },
+    ollamaModelCode: {
+      type: 'string',
+      default: Bun.env.OLLAMA_MODEL_CODE ?? "codellama:code"
+    },
+    ollamaCodePrompt: {
+      type: 'string',
+      default: Bun.env.OLLAMA_CODE_PROMPT ?? "<PRE> {prefixHelixGPT} <SUF>{suffixHelixGPT} <MID>"
     },
     ollamaContext: {
       type: 'string',
