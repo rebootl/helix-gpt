@@ -1,8 +1,8 @@
-theme = "bogster"
+# theme = "bogster"
 
-[editor]
-true-color = true
+# [editor]
+# true-color = true
 
-[editor.cursor-shape]
-insert = "bar"
+# [editor.cursor-shape]
+# insert = "bar"
 
